@@ -3,22 +3,23 @@ server:
 spring:
   application:
     name: credit-card-verify-service
-  cloud:
-    function:
-      definition: verifyCreditCardApplication
-    stream:
-      source: verifyCreditCardApplication-out-0
-      kafka:
-        binder:
-          brokers: localhost:9092
-          replicationFactor: 1
-        bindings:
-          verifyCreditCardApplication-in-0:
-            destination: CreditCardApplication
-            group: creditCard
-          verifyCreditCardApplication-out-0:
-              destination: CreditCardVerification
-              group: creditCard
+  pulsar:
+    client:
+      service-url: pulsar://localhost:6650
+    producer:
+      topic-name1: credit-card-apply
+      topic-name2: credit-card-verify
+    consumer:
+      subscription:
+        name: credit-card
+    defaults:
+      type-mappings:
+        - messageType: com.example.event.VerifyCreditCardEvent
+          schema-info:
+            schema-type: JSON
+        - messageType: com.example.event.NewCreditCardEvent
+          schema-info:
+            schema-type: JSON
   h2:
     console:
       enabled: true

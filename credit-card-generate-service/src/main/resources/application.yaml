@@ -3,20 +3,19 @@ server:
 spring:
   application:
     name: credit-card-generate-service
-  cloud:
-    function:
-      definition: generateCreditCard
-    stream:
-      kafka:
-        binder:
-          brokers: localhost:9092
-          replicationFactor: 1
-        bindings:
-          generateCreditCard-in-0:
-            destination: CreditCardVerification
-            group: creditCard
-            consumer:
-              max-attempts: 1
+  pulsar:
+    client:
+      service-url: pulsar://localhost:6650
+    producer:
+      topic-name1: credit-card-verify
+    consumer:
+      subscription:
+        name: credit-card
+    defaults:
+      type-mappings:
+        - messageType: com.example.event.VerifyCreditCardEvent
+          schema-info:
+            schema-type: JSON
   h2:
     console:
       enabled: true
